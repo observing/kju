@@ -1,0 +1,15 @@
+{
+    "name": "kju"
+  , "version": "0.0.1"
+  , "description": "Fault tolerant queue that queues data for bulk updates"
+  , "homepage": "http://observer.no.de"
+  , "keywords": ["kju", "queue", "bulk", "batch", "updates"]
+  , "dependencies": {
+        "eventemitter2": "0.4.1"
+    }
+  , "devDependencies": {
+        "should": "0.3.1"
+      , "expresso": "0.8.1"
+    }
+  , "main": "index"
+}
