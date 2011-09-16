@@ -242,19 +242,19 @@ module.exports = {
       });
     }
 
-  , 'reaching the maximum interval': function (next) {
+  , 'reaching the maximum timeout': function (next) {
       var q = new kju({ limit: 10, interval: 500 });
 
-      q.on('maximum interval.warning', function () {
+      q.on('maximum timeout.warning', function () {
         q.disable();
         next();
       });
     }
 
-  , 'reaching the minimum interval': function (next) {
+  , 'reaching the minimum timeout': function (next) {
       var q = new kju({ limit: 10, interval: 500 });
 
-      q.on('minimum interval.warning', function () {
+      q.on('minimum timeout.warning', function () {
         q.disable(true);
         next();
       });
