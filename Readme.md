@@ -107,6 +107,10 @@ Same as above, but for the minimum timeout this one is probably the most
 usefull as it will give you a small indication of what load your queue is
 currently under and if you might need to adjust some settings.
 
+> Because we are using EventEmitter 2 you can actually listen to both warnings
+at once using `kju.on('\*.warning', function () { .. })`. Which be handy in
+some cases where you want to listen to all the events.
+
 `recovered` (null)
 
 Emitted when we have successfully recovered a old data file.

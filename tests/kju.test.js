@@ -6,7 +6,7 @@
 
 var kju = require('../index')
   , should = require('should')
-  , spawn = require('child_process').spwan;
+  , spawn = require('child_process').spawn;
 
 // make sure we have proper stack traces for when things fail
 require('long-stack-traces');
@@ -271,5 +271,70 @@ module.exports = {
       while (i--) {
         q.push(i);
       }
+    }
+
+  , 'death recovery and data output': function (next) {
+      var external = spawn('node', [__dirname + '/simulate.death.js'])
+        , output;
+
+      // monitor for the output of the dump
+      external.stderr.on('data', function (data) {
+        var lines = data.toString().split('\n');
+
+        // make sure we have the correct output here
+        lines[0].should.equal('-- begin kju backup output');
+        lines[2].should.equal('-- end kju backup output');
+
+        output = JSON.parse(lines[1]);
+      });
+
+      // wait for the simulated death to end so we can read in the
+      // kju backup file
+      external.on('exit', function () {
+        var q = new kju;
+
+        q.on('data', function (data) {
+          // validate the data
+          data[0].should.equal(1);
+          data[1].should.equal(2);
+          data[2].should.equal('three');
+          data[3].should.equal(4);
+          data[4].should.equal(10);
+        })
+
+        // wait until the data has been read
+        q.on('recovered', function () {
+          // no need to do any assert tests here, if this doesn't
+          // get called, we get a timeout error. Which tells us enough.
+          q.disable();
+          next();
+        });
+      });
+    }
+
+  , 'kju metrics': function (next) {
+      var q = new kju
+        , i = 1345
+        , m1;
+
+      // add some data in to the kju, so we get some metrics
+      while (i--) q.push(i);
+      m1 = q.metrics();
+
+      // add more stats, but that is done a bit later
+      setTimeout(function () {
+        var i = 2424
+          , m2;
+
+        while (i--) q.push(i);
+
+        m2 = q.metrics();
+        m2['drained'].should.be.above(m1['drained']);
+        m2['processed'].should.be.above(m1['processed']);
+        m2['uptime'].should.be.above(m1['uptime']);
+
+        q.disable();
+        next();
+      }, 1000);
     }
 };

@@ -1,9 +1,13 @@
 {
     "name": "kju"
-  , "version": "0.0.1"
+  , "version": "0.0.2"
   , "description": "Fault tolerant queue that queues data for bulk updates"
   , "homepage": "http://observer.no.de"
   , "keywords": ["kju", "queue", "bulk", "batch", "updates"]
+  , "repository": {
+        "type": "git"
+      , "url": "https://github.com/observing/kju.git"
+    }
   , "dependencies": {
         "eventemitter2": "0.4.1"
     }
