@@ -234,4 +234,35 @@ module.exports = {
         }
       });
     }
+
+  , 'reaching the maximum interval': function (next) {
+      var q = new kju({ limit: 10, interval: 500 });
+
+      q.on('maximum interval.warning', function () {
+        q.disable();
+        next();
+      });
+    }
+
+  , 'reaching the minimum interval': function (next) {
+      var q = new kju({ limit: 10, interval: 500 });
+
+      q.on('minimum interval.warning', function () {
+        q.disable(true);
+        next();
+      });
+
+      // keep cycling the inital data
+      q.on('data', function (data) {
+        setTimeout(function () {
+          q.push.apply(q, data);
+        }, 10);
+      });
+
+      // feed inital data
+      var i = 10;
+      while (i--) {
+        q.push(i);
+      }
+    }
 };
