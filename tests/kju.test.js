@@ -1,5 +1,12 @@
+/**!
+ * kju
+ * @copyright (c) 2011 Observer (observer.no.de) <info@3rd-Eden.com>
+ * MIT Licensed
+ */
+
 var kju = require('../index')
-  , should = require('should');
+  , should = require('should')
+  , spawn = require('child_process').spwan;
 
 // make sure we have proper stack traces for when things fail
 require('long-stack-traces');
