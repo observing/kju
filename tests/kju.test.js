@@ -46,7 +46,7 @@ module.exports = {
       next();
     }
 
-  , 'invalid back up path for .kju files': function (next) {
+  , 'invalid path for .kju files': function (next) {
       var path = '/73179817047/kju/pew/pew/foo/bar'
         , q = new kju({ path: path });
 
@@ -149,7 +149,8 @@ module.exports = {
     }
 
   , 'draining kju': function (next) {
-      var q = new kju;
+      var q = new kju
+        , events = 0;
 
       q.on('data', function (data, length) {
         Array.isArray(data).should.be.true;
@@ -158,6 +159,8 @@ module.exports = {
         data[0].should.equal('foo');
         data[1].should.equal('bar');
         data[2].should.equal(12);
+
+        events++;
       });
 
       // add some values, in different orders <3
@@ -169,6 +172,7 @@ module.exports = {
       q.drained.should.equal(1);
       q.processed.should.equal(3);
       q.length.should.equal(0);
+      events.should.equal(1);
 
       // cleanup, do this last as it also resets the drained
       q.disable(true);
@@ -205,8 +209,11 @@ module.exports = {
 
       q.on('data', function (data, length) {
         length.should.be.above(9);
+        length.should.be.below(20);
 
-        if (++events === 2) return q.disable();
+        if (++events === 2) {
+          return q.disable();
+        }
       });
 
       q.on('disabled', function () {
