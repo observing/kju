@@ -1,6 +1,7 @@
 {
     "name": "kju"
   , "version": "0.0.2"
+  , "author": "Arnout Kazemier <info@3rd-Eden.com>"
   , "description": "Fault tolerant queue that queues data for bulk updates"
   , "homepage": "http://observer.no.de"
   , "keywords": ["kju", "queue", "bulk", "batch", "updates"]
