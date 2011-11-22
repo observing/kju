@@ -1,5 +1,4 @@
-# kju [![Build
-Status](https://secure.travis-ci.org/observing/kju.png)](http://travis-ci.org/observing/kju)
+# kju [![Build Status](https://secure.travis-ci.org/observing/kju.png)](http://travis-ci.org/observing/kju)
 
 kju (queue) is a evented and dynamic fault tolerant queueing system for
 Node.js. Node currently suffers from a big limitation, it does not support hot
