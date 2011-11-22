@@ -9,7 +9,7 @@ var kju = require('../index')
   , spawn = require('child_process').spawn;
 
 // make sure we have proper stack traces for when things fail
-require('long-stack-traces');
+// require('long-stack-traces');
 
 // the tests
 module.exports = {
@@ -70,7 +70,7 @@ module.exports = {
       // disabled events
       var q = new kju
         , events = 0;
- 
+
       q.on('disabled', function () { events++ });
       q.disable();
 
@@ -90,7 +90,7 @@ module.exports = {
       // disabled events
       var q = new kju
         , events = 0;
- 
+
       q.on('disabled', function () { events++ });
       q.disable();
       q.disable();
@@ -275,22 +275,25 @@ module.exports = {
 
   , 'death recovery and data output': function (next) {
       var external = spawn('node', [__dirname + '/simulate.death.js'])
-        , output;
+        , output
+        , buffering = '';
 
       // monitor for the output of the dump
       external.stderr.on('data', function (data) {
-        var lines = data.toString().split('\n');
+        buffering += data.toString();
+      });
+
+      // wait for the simulated death to end so we can read in the
+      // kju backup file
+      external.on('exit', function () {
+        var lines = buffering.toString().split('\n');
 
         // make sure we have the correct output here
         lines[0].should.equal('-- begin kju backup output');
         lines[2].should.equal('-- end kju backup output');
 
         output = JSON.parse(lines[1]);
-      });
 
-      // wait for the simulated death to end so we can read in the
-      // kju backup file
-      external.on('exit', function () {
         var q = new kju;
 
         q.on('data', function (data) {
