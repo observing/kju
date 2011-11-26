@@ -5,7 +5,6 @@
  */
 
 var kju = require('../index')
-  , should = require('should')
   , spawn = require('child_process').spawn;
 
 // make sure we have proper stack traces for when things fail
