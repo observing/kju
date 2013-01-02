@@ -5,8 +5,7 @@
  * @copyright (c) 2013 Observe.it (http://observe.it) <opensource@observe.it>
  * MIT Licensed
  */
-
-var kju = new (require('../index'));
+var kju = new (require('../lib/kju'));
 
 // add some items to the kju so we need to
 // store them once process is existing.

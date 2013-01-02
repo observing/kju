@@ -6,7 +6,7 @@
  * MIT Licensed
  */
 
-var kju = require('../index')
+var kju = require('../lib/kju')
   , spawn = require('child_process').spawn;
 
 // set up chai, our assertation library
