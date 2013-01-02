@@ -1,55 +1,60 @@
+'use strict';
+
 /**!
  * kju
- * @copyright (c) 2011 Observer (observer.no.de) <info@3rd-Eden.com>
+ * @copyright (c) 2013 Observe.it (http://observe.it) <opensource@observe.it>
  * MIT Licensed
  */
 
 var kju = require('../index')
   , spawn = require('child_process').spawn;
 
+// set up chai, our assertation library
+var chai = require('chai')
+  , expect = chai.expect;
+
+chai.Assertion.includeStack = true;
+
 // make sure we have proper stack traces for when things fail
 // require('long-stack-traces');
 
 // the tests
 module.exports = {
-    'semver compatible version number': function (next) {
-      kju.version.should.match(/^\d+\.\d+\.\d+$/);
-      next();
+    'semver compatible version number': function () {
+      expect(kju.version).to.match(/^\d+\.\d+\.\d+$/);
     }
 
-  , 'basic kju configurations': function (next) {
+  , 'basic kju configurations': function () {
       // default kju
       var q = new kju;
 
-      q.limit.should.be.a('number');
-      q.ms.should.be.a('number');
-      q.interval.should.be.a('number');
+      expect(q.limit).to.be.a('number');
+      expect(q.ms).to.be.a('number');
+      expect(q.interval).to.be.a('number');
 
-      q.warnings.should.be.true
-      q.enabled.should.be.true;
-      q.recover.should.be.true;
+      expect(q.warnings).to.equal(true);
+      expect(q.enabled).to.equal(true);
+      expect(q.recover).to.equal(true);
 
-      q.path.should.be.be.a('string');
-      q.name.should.match(/\{sequence\}/);
+      expect(q.path).to.be.be.a('string');
+      expect(q.name).to.match(/\{sequence\}/);
 
-      q.minimum.should.be.below(q.maximum);
-      q.minimum.should.be.below(q.interval);
-      q.maximum.should.be.above(q.minimum);
-      q.maximum.should.be.above(q.interval);
+      expect(q.minimum).to.be.below(q.maximum);
+      expect(q.minimum).to.be.below(q.interval);
+      expect(q.maximum).to.be.above(q.minimum);
+      expect(q.maximum).to.be.above(q.interval);
 
-      q.since.should.be.a('number');
-      q.since.should.be.above(0);
+      expect(q.since).to.be.a('number');
+      expect(q.since).to.be.above(0);
 
       // don't block the event loop
       q.disable();
 
       var Q = new kju({ limit: 600, enabled: false });
 
-      Q.limit.should.equal(600);
-      Q.ms.should.equal(q.ms);
-      Q.enabled.should.be.false;
-
-      next();
+      expect(Q.limit).to.equal(600);
+      expect(Q.ms).to.equal(q.ms);
+      expect(Q.enabled).to.equal(false);
     }
 
   , 'invalid path for .kju files': function (next) {
@@ -57,7 +62,7 @@ module.exports = {
         , q = new kju({ path: path });
 
       q.on('error', function (err) {
-        err.message.should.equal(path + ' does not exist.');
+        expect(err.message).to.equal(path + ' does not exist.');
         next();
       });
 
@@ -65,32 +70,30 @@ module.exports = {
       q.disable();
     }
 
-  , 'enabling & disabling kju': function (next) {
+  , 'enabling & disabling kju': function () {
       // disabled events
       var q = new kju
         , events = 0;
 
-      q.on('disabled', function () { events++ });
+      q.on('disabled', function () { events++; });
       q.disable();
 
       // enabled events
       q = new kju({ enabled: false });
-      q.on('enabled', function () { events++ });
+      q.on('enabled', function () { events++; });
       q.enable();
 
       // don't block the event loop
       q.disable();
-      events.should.equal(2);
-
-      next();
+      expect(events).to.equal(2);
     }
 
-  , 'enabling & disabling kju multiple times': function (next) {
+  , 'enabling & disabling kju multiple times': function () {
       // disabled events
       var q = new kju
         , events = 0;
 
-      q.on('disabled', function () { events++ });
+      q.on('disabled', function () { events++; });
       q.disable();
       q.disable();
       q.disable();
@@ -101,7 +104,7 @@ module.exports = {
 
       // enabled events
       q = new kju({ enabled: false });
-      q.on('enabled', function () { events++ });
+      q.on('enabled', function () { events++; });
       q.enable();
       q.enable();
       q.enable();
@@ -112,59 +115,54 @@ module.exports = {
 
       // don't block the event loop
       q.disable();
-      events.should.equal(2);
-
-      next();
+      expect(events).to.equal(2);
     }
 
-  , 'pushing items in to kju': function (next) {
+  , 'pushing items in to kju': function () {
       var q = new kju
         , i = 1000;
 
       while (i--) {
         q.push(i);
-        q.length.should.equal(q.buffer.length);
+        expect(q.length).to.equal(q.buffer.length);
       }
 
       q.disable();
-      next();
     }
 
-  , 'pushing multiple arguments in to kju': function (next) {
+  , 'pushing multiple arguments in to kju': function () {
       var q = new kju;
 
       q.push(1, 2, 3, 4, 5, 6, 7, 8, 9);
-      q.length.should.equal(9);
-      q.length.should.equal(q.buffer.length);
+      expect(q.length).to.equal(9);
+      expect(q.length).to.equal(q.buffer.length);
 
       q.disable();
-      next();
     }
 
-  , 'kju chaining': function (next) {
+  , 'kju chaining': function () {
       var q = new kju;
 
       // \o/ method chaining
-      q.push(1)
+      expect(q.push(1)
        .push(2)
        .push(3, 4)
        .disable(true)
-       .length.should.equal(4);
-
-      next();
+       .length
+      ).to.equal(4);
     }
 
-  , 'draining kju': function (next) {
+  , 'draining kju': function () {
       var q = new kju
         , events = 0;
 
       q.on('data', function (data, length) {
-        Array.isArray(data).should.be.true;
-        length.should.equal(3);
+        expect(Array.isArray(data)).to.equal(true);
+        expect(length).to.equal(3);
 
-        data[0].should.equal('foo');
-        data[1].should.equal('bar');
-        data[2].should.equal(12);
+        expect(data[0]).to.equal('foo');
+        expect(data[1]).to.equal('bar');
+        expect(data[2]).to.equal(12);
 
         events++;
       });
@@ -175,17 +173,16 @@ module.exports = {
       // manually trigger the drain function
       q.drain();
 
-      q.drained.should.equal(1);
-      q.processed.should.equal(3);
-      q.length.should.equal(0);
-      events.should.equal(1);
+      expect(q.drained).to.equal(1);
+      expect(q.processed).to.equal(3);
+      expect(q.length).to.equal(0);
+      expect(events).to.equal(1);
 
       // cleanup, do this last as it also resets the drained
       q.disable(true);
-      next();
     }
 
-  , 'kju iterating': function (next) {
+  , 'kju iterating': function () {
       var q = new kju
         , count = 0
         , that = {};
@@ -194,19 +191,18 @@ module.exports = {
 
       // argument verification
       q.forEach(function (item, index, array) {
-        index.should.equal(count);
-        (++count).should.equal(item);
-        array.length.should.equal(3);
+        expect(index).to.equal(count);
+        expect(++count).to.equal(item);
+        expect(array.length).to.equal(3);
       });
 
       // context verification
       q.forEach(function () {
-        this.should.equal(that);
+        expect(this).to.equal(that);
       }, that);
 
       // oh, w r disabling the queue
       q.disable();
-      next();
     }
 
   , 'default data behaviour': function (next) {
@@ -214,17 +210,15 @@ module.exports = {
         , events = 0;
 
       q.on('data', function (data, length) {
-        length.should.be.above(9);
-        length.should.be.below(20);
+        expect(length).to.be.above(9);
+        expect(length).to.be.below(20);
 
         if (++events === 2) {
           return q.disable();
         }
       });
 
-      q.on('disabled', function () {
-        next();
-      });
+      q.on('disabled', next);
 
       // add items to the que, async :)
       var i = 10;
@@ -288,8 +282,8 @@ module.exports = {
         var lines = buffering.toString().split('\n');
 
         // make sure we have the correct output here
-        lines[0].should.equal('-- begin kju backup output');
-        lines[2].should.equal('-- end kju backup output');
+        expect(lines[0]).to.equal('-- begin kju backup output');
+        expect(lines[2]).to.equal('-- end kju backup output');
 
         output = JSON.parse(lines[1]);
 
@@ -297,12 +291,12 @@ module.exports = {
 
         q.on('data', function (data) {
           // validate the data
-          data[0].should.equal(1);
-          data[1].should.equal(2);
-          data[2].should.equal('three');
-          data[3].should.equal(4);
-          data[4].should.equal(10);
-        })
+          expect(data[0]).to.equal(1);
+          expect(data[1]).to.equal(2);
+          expect(data[2]).to.equal('three');
+          expect(data[3]).to.equal(4);
+          expect(data[4]).to.equal(10);
+        });
 
         // wait until the data has been read
         q.on('recovered', function () {
@@ -331,9 +325,9 @@ module.exports = {
         while (i--) q.push(i);
 
         m2 = q.metrics();
-        m2['drained'].should.be.above(m1['drained']);
-        m2['processed'].should.be.above(m1['processed']);
-        m2['uptime'].should.be.above(m1['uptime']);
+        expect(m2.drained).to.be.above(m1.drained);
+        expect(m2.processed).to.be.above(m1.processed);
+        expect(m2.uptime).to.be.above(m1.uptime);
 
         q.disable();
         next();

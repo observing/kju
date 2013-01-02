@@ -1,23 +1,23 @@
 {
     "name": "kju"
-  , "version": "0.0.2"
+  , "version": "0.0.3"
   , "author": "Arnout Kazemier <info@3rd-Eden.com>"
   , "description": "Fault tolerant queue that queues data for bulk updates"
-  , "homepage": "http://observer.no.de"
+  , "homepage": "http://observe.it"
   , "keywords": ["kju", "queue", "bulk", "batch", "updates"]
   , "repository": {
         "type": "git"
       , "url": "https://github.com/observing/kju.git"
     }
   , "dependencies": {
-        "eventemitter2": "0.4.1"
+        "eventemitter2": "0.4.11"
     }
   , "devDependencies": {
-        "should": "0.3.2"
-      , "mocha": "*"
+        "chai": "1.4.x"
+      , "mocha": "1.7.x"
       , "long-stack-traces": "0.1.2"
     }
-  , "main": "index"
+  , "main": "lib/kju.js"
   , "scripts": {
         "test": "make test"
     }
