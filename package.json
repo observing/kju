@@ -10,11 +10,11 @@
       , "url": "https://github.com/observing/kju.git"
     }
   , "dependencies": {
-        "eventemitter2": "0.4.11"
+        "eventemitter2": "2.2.0"
     }
   , "devDependencies": {
-        "chai": "1.4.x"
-      , "mocha": "1.7.x"
+        "chai": "~3.5.0"
+      , "mocha": "~3.1.2"
       , "long-stack-traces": "0.1.2"
     }
   , "main": "lib/kju.js"
